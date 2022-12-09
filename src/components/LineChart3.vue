@@ -131,11 +131,11 @@ onMounted(()=> {
 //   xData.shift()
 // }
 function realTimeLineChart() {
-  let margin = {top: 20, right: 20, bottom: 20, left: 20},
-      width = 600,
-      height = 400,
-      duration = 500,
-      color = d3.schemeCategory10;
+  let margin = {top: 20, right: 20, bottom: 20, left: 30};
+  let width = 600;
+  let height = 400;
+  let duration = 500;
+  let color = d3.schemeCategory10;
 
   function chart(selection:any) {
     // Based on https://bl.ocks.org/mbostock/3884955
@@ -149,21 +149,25 @@ function realTimeLineChart() {
         };
       });
 
-      const t = d3.transition().duration(duration).ease(d3.easeLinear),
-          x = d3.scaleTime().rangeRound([0, width-margin.left-margin.right]),
-          y = d3.scaleLinear().rangeRound([height-margin.top-margin.bottom, 0]),
-          z = d3.scaleOrdinal(color);
+      const t = d3.transition().duration(duration).ease(d3.easeLinear);
+      // const x = d3.scaleTime().rangeRound([0, width-margin.left-margin.right]);
+      const x = d3.scaleLinear().rangeRound([0, width-margin.left-margin.right]);
+      const y = d3.scaleLinear().rangeRound([height-margin.top-margin.bottom, 0]);
+      const z = d3.scaleOrdinal(color);
 
-      const xMin = d3.min(data, function(c:any) { return d3.min(c.values, function(d) { return d.time; })});
-      const xMax = new Date(new Date(d3.max(data, function(c:any) {
-        return d3.max(c.values, function(d:any) { return d.time; })
-      })as any).getTime() - (duration*2));
+      const xMin = d3.min(data, function(c:any) { return d3.min(c.values, function(d:any) { return d.time; })});
+      // const xMax = new Date(new Date(d3.max(data, function(c:any) {
+      //   return d3.max(c.values, function(d:any) { return d.; })
+      // })as any).getTime() - (duration*2));
+
+      const xMax = d3.max(data, function(c:any) { return d3.max(c.values, function(d:any) { return d.time; })});
 
       x.domain([xMin, xMax] as any);
-      y.domain([
-        d3.min(data, function(c:any) { return d3.min(c.values, function(d:any) { return d.value; })}),
-        d3.max(data, function(c:any) { return d3.max(c.values, function(d:any) { return d.value; })})
-      ] as any);
+      // y.domain([
+      //   d3.min(data, function(c:any) { return d3.min(c.values, function(d:any) { return d.value; })}),
+      //   d3.max(data, function(c:any) { return d3.max(c.values, function(d:any) { return d.value; })})
+      // ] as any);
+      y.domain([-10, 10]);
       z.domain(data.map(function(c:any) { return c.label; }));
 
       const line = d3.line()
@@ -176,16 +180,16 @@ function realTimeLineChart() {
       gEnter.append("g").attr("class", "axis x");
       gEnter.append("g").attr("class", "axis y");
       gEnter.append("defs").append("clipPath")
-          .attr("id", "clip")
+        .attr("id", "clip")
         .append("rect")
-          .attr("width", width-margin.left-margin.right)
-          .attr("height", height-margin.top-margin.bottom);
+        .attr("width", width-margin.left-margin.right)
+        .attr("height", height-margin.top-margin.bottom);
       gEnter.append("g")
-          .attr("class", "lines")
-          .attr("clip-path", "url(#clip)")
+        .attr("class", "lines")
+        .attr("clip-path", "url(#clip)")
         .selectAll(".data").data(data).enter()
-          .append("path")
-            .attr("class", "data");
+        .append("path")
+        .attr("class", "data");
 
       const legendEnter = gEnter.append("g")
         .attr("class", "legend")
@@ -200,7 +204,7 @@ function realTimeLineChart() {
         .append("text")
           .attr("y", function(d, i) { return (i*20) + 25; })
           .attr("x", 5)
-          .attr("fill", function(d) { return z(d.label); });
+          .attr("fill", function(d:any) { return z(d.label); });
 
       svg = selection.select("svg");
       svg.attr('width', width).attr('height', height);
@@ -224,7 +228,7 @@ function realTimeLineChart() {
       g.selectAll("g path.data")
         .data(data)
         .style("stroke", function(d: any) { return z(d.label); })
-        .style("stroke-width", 1)
+        .style("stroke-width", 0.1)
         .style("fill", "none")
         .transition()
         .duration(duration)
@@ -243,7 +247,8 @@ function realTimeLineChart() {
           .attr("d", function(d:any) { return line(d.values); })
           .attr("transform", null);
 
-        const xMinLess = new Date(new Date(xMin as any).getTime() - duration);
+        // const xMinLess = new Date(new Date(xMin as any).getTime() - duration);
+        const xMinLess = Number(xMin);
         d3.active(this)!
             .attr("transform", "translate(" + x(xMinLess) + ",0)")
           .transition()
@@ -286,19 +291,21 @@ function realTimeLineChart() {
 }
 
 const lineArr = [] as any;
-    const MAX_LENGTH = 100;
+    const MAX_LENGTH = 5000;
     const duration = 500;
     const chart = realTimeLineChart();
 
     function randomNumberBounds(min:any, max:any) {
       return Math.floor(Math.random() * max) + min;
     }
-
+    let count = 0.00;
     function seedData() {
-      const now = new Date();
+      // const now = new Date();
       for (let i = 0; i < MAX_LENGTH; ++i) {
+        const now = count+=0.01;
         lineArr.push({
-          time: new Date(now.getTime() - ((MAX_LENGTH - i) * duration)),
+          // time: new Date(now.getTime() - ((MAX_LENGTH - i) * duration)),
+          time: now,
           x: randomNumberBounds(0, 5),
           y: randomNumberBounds(0, 2.5),
           z: randomNumberBounds(0, 10)
@@ -307,7 +314,8 @@ const lineArr = [] as any;
     }
 
     function updateData() {
-      const now = new Date();
+      // const now = new Date();
+      const now = count+=0.01;
 
       const lineData = {
         time: now,
@@ -315,9 +323,19 @@ const lineArr = [] as any;
         y: randomNumberBounds(0, 2.5),
         z: randomNumberBounds(0, 10)
       };
+      if(count == 1.2){
+          const lineData = {
+          time: now,
+          x: 10,
+          y: 3,
+          z: 4
+        };
+        lineArr.push(lineData);
+      }else{
       lineArr.push(lineData);
+      }
 
-      if (lineArr.length > 30) {
+      if (lineArr.length > MAX_LENGTH) {
         lineArr.shift();
       }
       d3.select("#chart").datum(lineArr).call(chart);
@@ -333,7 +351,7 @@ const lineArr = [] as any;
 
     document.addEventListener("DOMContentLoaded", function() {
       seedData();
-      window.setInterval(updateData, 50);
+      window.setInterval(updateData, 10);
       d3.select("#chart").datum(lineArr).call(chart);
       d3.select(window).on('resize', resize);
     });
