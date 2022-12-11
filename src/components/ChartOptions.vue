@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { Const } from '@/components/common'
-import { useChartOptionStore } from '@/store/store';
+// import { useChartOptionStore } from '@/store/store';
 import { reactive, watch } from 'vue';
 
 const optionStore = useChartOptionStore();

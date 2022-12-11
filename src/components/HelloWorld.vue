@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 // import { Options, Vue } from 'vue-class-component';
-const msg = defineProps({msg: String});
+// const msg = defineProps({msg: String});
 
 </script>
 

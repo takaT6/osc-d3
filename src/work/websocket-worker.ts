@@ -1,13 +1,10 @@
-import { Const, PlotData } from '@/components/common';
+import { Const, PlotDataFormat } from '@/components/common';
 
 // WebWorker Instance
 const worker: Worker = self as any;
 
 const postMessage = (type: string, value: number | boolean) => worker.postMessage({type, value});
 
-const postData = (val: Float32Array) => {
-  worker.postMessage({type:'plotData',plotData:plotData},[plotData.buffer]);
-}
 // WebSocket Instance for publishing connection and running measurement.
 let runnerConnection: WebSocket;
 
@@ -17,8 +14,8 @@ let stopperConnection: WebSocket;
 // false: unconected, true: connected
 const isConnect = (() => {
   let v = false;
-  const change = (n: boolean) => postMessage("isConnect", v = n);
-  const send = () => postMessage("isConnect", v);
+  const change = (n: boolean) => postMessage('isConnect', v = n);
+  const send = () => postMessage('isConnect', v);
   const value = () => v;
   return { value, change, send };
 })();
@@ -30,15 +27,15 @@ let stopperStatus = 0;
 const isProcess = (() => {
   let v = false;
   const change = (n: boolean) => {
-    postMessage("isProcess", v = n);
-    if(v) newFrame();
+    postMessage('isProcess', v = n);
+    // if(v) newFrame();
   };
-  const send = () => postMessage("isProcess", v);
+  const send = () => postMessage('isProcess', v);
   const value = () => v;
   return { value, change, send};
 })()
 
-let plotData = new Float32Array([...new Array(5000*2)].map((_, i) => 0));
+let plotData: Array<PlotDataFormat> = [];
 
 let count = 0;
 
@@ -49,17 +46,9 @@ const resetChartData = (): void => {
 worker.onmessage = (event: MessageEvent): void => {
   const mssg = event.data.mssg;
   switch (mssg) {
-    case 'sendData':{
-      const copyData = new Float32Array([...new Array(5000*2)].map((_, i) => 0));
-      for(let i=0, len=plotData.length; i<len; i++){
-        copyData[i] = plotData[i]
-      }
-      worker.postMessage({type:'plotData',plotData:copyData},[copyData.buffer]);
-      break;
-    }
-    case 'ready':
-      plotData = event.data.plotData;
-      postMessage('count', plotData.length)
+    case 'sendData':
+      worker.postMessage({type:'plotData',plotData});
+      plotData = [];
       break;
     case 'connect':
       connectWss();
@@ -75,22 +64,6 @@ worker.onmessage = (event: MessageEvent): void => {
       break;
   }
 }
-
-const newFrame = (): void => {
-  // Send mssg to main thread.
-  // postMessage('plotData', plotData)
-  // const copyData = plotData.slice()
-  // postData(copyData)
-  // postData();
-  if(count%10){
-  const copyData = new Float32Array([...new Array(5000*2)].map((_, i) => 0));
-  for(let i=0, len=plotData.length; i<len; i++){
-    copyData[i] = plotData[i]
-  }
-  worker.postMessage({type:'plotData',plotData:copyData},[copyData.buffer]);
-  }
-  if(isProcess.value()) requestAnimationFrame(newFrame);
-};
 
 /**
  * Connect with WebSocket server.
@@ -116,20 +89,11 @@ const connectWss = (): boolean => {
   runnerConnection.onmessage = (event: MessageEvent): void => {
     const jsonData = JSON.parse(event.data);
     switch (jsonData.type) {
-      case "data":
+      case 'data':
         count++;
-        // plotData.x.shift();
-        // plotData.y.shift();
-        // plotData.x.push(jsonData.timestamp);
-        // plotData.y.push(jsonData.value);
-        for( let i=0, len =plotData.length/2-1; i< len; i++){
-          plotData[i*2] = plotData[i*2+2];
-          plotData[i*2+1] = plotData[i*2+1+2];
-        }
-        plotData[plotData.length-2] = jsonData.timestamp;
-        plotData[plotData.length-1] = jsonData.value;
+        plotData.push({time: jsonData.timestamp, value1: jsonData.value})
         break;
-      case "isProcess":
+      case 'isProcess':
         isProcess.change(jsonData.value);
         postMessage('count', count)
         break;
