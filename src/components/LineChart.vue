@@ -45,12 +45,12 @@
 <script setup lang="ts" >
 import { onMounted, watch, toRefs, reactive } from "vue";
 import { Const } from '@/components/common';
-import { ChartUtil, activateChart } from '@/components/chartUtil';
+import { ChartUtil } from '@/components/chartUtil';
 
 const chartUtil = new ChartUtil();
 
 onMounted(()=> {
-  activateChart();
+  chartUtil.initRenderer();
 });
 
 </script>
@@ -65,5 +65,6 @@ onMounted(()=> {
   background-color: black;
   width: auto;
   height: 430px;
+  
 }
 </style>

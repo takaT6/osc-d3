@@ -9,6 +9,7 @@ export const Const = {
 export interface PlotDataFormat {
   time: number,
   value1: number,
+  markLine?: number,
 }
 
 export interface ChartDataFormat{
