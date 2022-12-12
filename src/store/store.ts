@@ -1,6 +1,6 @@
 import { ref, reactive, toRefs } from 'vue';
 import { defineStore } from 'pinia';
-import { Const } from '@/components/common';
+import { Const } from '@/script/common';
 
 export const useChartStore = defineStore('chartStore', () => {
   const isConnect = ref(false);

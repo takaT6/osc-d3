@@ -1,6 +1,6 @@
 
 import * as d3 from 'd3'
-import { PlotDataFormat, ChartDataFormat } from '@/components/common';
+import { PlotDataFormat, ChartDataFormat } from '@/script/common';
 import { ChartOtpionUtil } from './chartOptionUtil';
 
 export class RenderUtil extends ChartOtpionUtil{

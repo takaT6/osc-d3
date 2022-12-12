@@ -36,7 +36,7 @@
   </div>
 
   <button
-      @click="chartUtil.changeAxis"
+      @click="chartUtil.rerender"
     > change axis
   </button>
   <br>
@@ -44,8 +44,8 @@
 
 <script setup lang="ts" >
 import { onMounted, watch, toRefs, reactive } from "vue";
-import { Const } from '@/components/common';
-import { ChartUtil } from '@/components/chartUtil';
+import { Const } from '@/script/common';
+import { ChartUtil } from '@/script/chartUtil';
 
 const chartUtil = new ChartUtil();
 

@@ -1,8 +1,8 @@
 import WebSocketWorker from 'worker-loader?inline=fallback!@/work/websocket-worker.ts';
-import { Const, PlotDataFormat, ChartDataFormat } from '@/components/common';
+import { Const, PlotDataFormat, ChartDataFormat } from '@/script/common';
 import { ref } from 'vue';
 import * as d3 from 'd3'
-import { RenderUtil } from "@/components/renderUtil";
+import { RenderUtil } from "@/script/renderUtil";
 
 export class ChartUtil extends RenderUtil{
 
@@ -62,10 +62,8 @@ export class ChartUtil extends RenderUtil{
     d3.select(window).on('resize', this.resize);
   }
 
-  public changeAxis = ():void => {
-    // axisXmax = randomNumberBounds(0,3);
-    // if(axisXmax < 0){ axisXmin = axisXmax-4
-    // }else{axisXmin = axisXmax-4}
-    // d3.select('#osc-chart').datum(lineArr).call(chart);
+  public rerender = (): void => {
+    this.changeXAxis(5,10);
+    d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
   }
 }

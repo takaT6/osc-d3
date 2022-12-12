@@ -19,9 +19,9 @@ import { Const } from '@/components/common'
 // import { useChartOptionStore } from '@/store/store';
 import { reactive, watch } from 'vue';
 
-const optionStore = useChartOptionStore();
+// const optionStore = useChartOptionStore();
 
-const { showXaxis, showYaxis, markLineYvalue } = optionStore
+// const { showXaxis, showYaxis, markLineYvalue } = optionStore
 
 const show = {
   xaxis: true,
@@ -34,7 +34,7 @@ const value = reactive({
 
 watch(value, () => {
   // console.log('marke line val')
-  markLineYvalue(value.markLine)
+  // markLineYvalue(value.markLine)
   setTimeout(()=>{
     /** donothing */
   },100)

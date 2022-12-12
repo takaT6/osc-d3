@@ -1,11 +1,11 @@
 
-import { Const, PlotDataFormat, ChartDataFormat } from '@/components/common';
+import { Const, PlotDataFormat, ChartDataFormat } from '@/script/common';
 
 export class ChartOtpionUtil {
   public xAxisMax = 5;
   public xAxisMin = -5;
   public yAxisMax = 10;
-  public yAxisMin = -10;
+  public yAxisMin = -4;
 
   public margin = {top: 20, right: 20, bottom: 25, left: 50};
   public width = document.body.clientWidth;
@@ -35,6 +35,11 @@ export class ChartOtpionUtil {
         markLine: -5
       });
     }
+  }
+
+  public changeXAxis = (min:number, max:number): void => {
+    this.yAxisMin = 1
+    this.yAxisMax = 5
   }
 
 }

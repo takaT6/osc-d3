@@ -1,4 +1,4 @@
-import { Const, PlotDataFormat } from '@/components/common';
+import { Const, PlotDataFormat } from '@/script/common';
 
 // WebWorker Instance
 const worker: Worker = self as any;
