@@ -1,8 +1,8 @@
 import WebSocketWorker from 'worker-loader?inline=fallback!@/work/websocket-worker.ts';
-import { Const, PlotDataFormat, ChartDataFormat } from '@/script/common';
 import { ref } from 'vue';
 import * as d3 from 'd3'
 import { RenderUtil } from "@/script/renderUtil";
+import { PlotDataFormat } from '@/script/common';
 
 export class ChartUtil extends RenderUtil{
 
@@ -18,7 +18,7 @@ export class ChartUtil extends RenderUtil{
       switch (event.data.type){
         case 'plotData':
           for(let i=0, len=event.data.plotData.length; i<len; i++){
-            event.data.plotData[i].markLine = -5
+            event.data.plotData[i].markline = -5
             this.dataArr.push(event.data.plotData[i]);
             this.dataArr.shift();
           }
@@ -52,18 +52,39 @@ export class ChartUtil extends RenderUtil{
 
   public disconnect = (): void => this.wsPostMessage('disconnect');
 
-  public run = (): void => this.wsPostMessage('run');
+  public run = (): void => {this.seedData();this.wsPostMessage('run');}
 
   public stop = (): void => this.wsPostMessage('stop');
+  
+
+  public seedData = (): void => {
+    const seedData = new Array<PlotDataFormat>
+    for (let i = 0; i < this.DATA_MAX_LENGTH; ++i) {
+      if(i>=100000){
+        seedData.push({
+          time: i,
+          channel1: 0
+        });
+      }else{
+        seedData.push({
+          time: 0,
+          channel1: 0
+        });
+
+      }
+    }
+    this.dataArr = seedData
+  }
 
   public initRenderer = (): void => {
     this.seedData();
     d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
     d3.select(window).on('resize', this.resize);
+    this.rerender();
   }
 
   public rerender = (): void => {
-    this.changeXAxis(5,10);
     d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    requestAnimationFrame(this.rerender);
   }
 }

@@ -91,7 +91,7 @@ const connectWss = (): boolean => {
     switch (jsonData.type) {
       case 'data':
         count++;
-        plotData.push({time: jsonData.timestamp, value1: jsonData.value})
+        plotData.push({time: jsonData.timestamp, channel1: jsonData.value})
         break;
       case 'isProcess':
         isProcess.change(jsonData.value);
