@@ -12,25 +12,25 @@ export class ChartUtil extends RenderUtil{
 
   public isProcess = ref(false);
 
-  constructor(){
+  constructor() {
     super();
     this.wsWorker.onmessage = (event: MessageEvent): void => {
       switch (event.data.type){
         case 'plotData':
           for(let i=0, len=event.data.plotData.length; i<len; i++){
-            event.data.plotData[i].markline = -5
             this.dataArr.push(event.data.plotData[i]);
             this.dataArr.shift();
+            this.upTriger.judgge(event.data.plotData[i].channel1);
           }
-          // lineArr.push(...event.data.plotData)
-            d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+          d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
           break;
         case 'isConnect':
           this.isConnect.value = event.data.value;
           break;
         case 'isProcess':
           this.isProcess.value = event.data.value;
-          if(event.data.value) requestAnimationFrame(this.newFrame);
+          this.upTriger.set(this.marklineVal.value)
+          if (event.data.value) requestAnimationFrame(this.newFrame);
           break;
         case 'count':
           console.log(event.data.value);
@@ -39,10 +39,13 @@ export class ChartUtil extends RenderUtil{
     }
   }
   
-  public wsPostMessage = (mssg:string): void => { this.wsWorker.postMessage({mssg}); }
+  public wsPostMessage = (mssg:string | object): void => { 
+    if (typeof mssg === 'string') this.wsWorker.postMessage({mssg}); 
+    else this.wsWorker.postMessage(mssg); 
+  }
 
-  private newFrame = ():void => {
-    if(this.isProcess.value){
+  private newFrame = (): void => {
+    if (this.isProcess.value) {
       this.wsPostMessage('sendData');
       requestAnimationFrame(this.newFrame);
     }
@@ -52,28 +55,34 @@ export class ChartUtil extends RenderUtil{
 
   public disconnect = (): void => this.wsPostMessage('disconnect');
 
-  public run = (): void => {this.seedData();this.wsPostMessage('run');}
+  public run = (): void => { 
+    this.seedData();
+    if (this.isTimer) this.wsPostMessage({mssg:'run', timer:this.timer});
+    else this.wsPostMessage('run');
+  }
 
   public stop = (): void => this.wsPostMessage('stop');
   
-
+  private seedDataSet = [...Array(this.DATA_MAX_LENGTH)].map(i => { return {time: 0, channel1: 0}});
   public seedData = (): void => {
-    const seedData = new Array<PlotDataFormat>
-    for (let i = 0; i < this.DATA_MAX_LENGTH; ++i) {
-      if(i>=100000){
-        seedData.push({
-          time: i,
-          channel1: 0
-        });
-      }else{
-        seedData.push({
-          time: 0,
-          channel1: 0
-        });
-
-      }
-    }
-    this.dataArr = seedData
+    console.log(this.dataArr.length)
+    // const seedData = new Array<PlotDataFormat>
+    // for (let i=0; i < this.DATA_MAX_LENGTH; ++i) {
+    //   if (i>=100000){
+    //     seedData.push({
+    //       time: i,
+    //       channel1: 0
+    //     });
+    //   }else{
+    //     seedData.push({
+    //       time: 0,
+    //       channel1: 0
+    //     });
+    //   }
+    // }
+    // this.dataArr = seedData
+    this.dataArr = [];
+    this.dataArr = this.seedDataSet;
   }
 
   public initRenderer = (): void => {
@@ -84,7 +93,25 @@ export class ChartUtil extends RenderUtil{
   }
 
   public rerender = (): void => {
-    d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    if (!this.isProcess.value) d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
     requestAnimationFrame(this.rerender);
   }
+
+  public upTriger = (() => {
+    let v = 0;
+    let pre_v = 0;
+    const set = (val: number) => {
+      pre_v = 1000000;
+      v = val;
+    }
+    let isSendStop = false;
+    const judgge = (val:number) => {
+      if (!isSendStop && pre_v < val && v < val ){
+        this.stop();
+        isSendStop = true;
+      }
+      pre_v = val;
+    }
+    return { set, judgge };
+  })();
 }

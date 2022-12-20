@@ -3,7 +3,7 @@ import { PlotDataFormat } from '@/script/common';
 import { ref } from "vue";
 
 export class ChartOtpionUtil {
-  public margin = {top: 20, right: 30, bottom: 25, left: 30};
+  public margin = {top: 20, right: 10, bottom: 40, left: 50};
   public width = document.body.clientWidth;
   public height = 420;
   public duration = 500;
@@ -21,11 +21,15 @@ export class ChartOtpionUtil {
   public yAxis = {
     max: 10,
     min: -10,
-    fontsize: 12,
+    fontsize: 10,
     ticks: 10
   }
 
-  public ismarklineSet = ref(false);
+  public isTimer = true;
+
+  public timer = 3000;
+
+  public isMarklineSet = ref(false);
 
   public marklineVal = ref(5);
 

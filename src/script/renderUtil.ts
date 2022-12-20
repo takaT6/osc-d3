@@ -5,7 +5,7 @@ import { ChartOtpionUtil } from './chartOptionUtil';
 
 export class RenderUtil extends ChartOtpionUtil{
 
-  private realTimeLineChart = () => {
+  private realTimeLineChart() {
     const chart = (selection:any) => {
       selection.each((data:any) => {
         // data = ['x', 'y', 'z'].map(function(c) {
@@ -37,11 +37,10 @@ export class RenderUtil extends ChartOtpionUtil{
         gEnter.append('g').attr('class', 'axis x');
         gEnter.append('g').attr('class', 'axis y');
         gEnter.append('defs').append('clipPath')
-          .attr('id', 'clip')
           .append('rect')
-          .attr('width', this.width-this.margin.left-this.margin.right)
-          .attr('height', this.height-this.margin.top-this.margin.bottom);
-        gEnter.append("g").attr('class', 'markline')
+          .attr('id', 'clip')
+        gEnter.append("g")
+          .attr('class', 'markline')
           .attr('clip-path', 'url(#clip)')
           .append("line")
           .style("stroke", this.color[1])
@@ -53,7 +52,21 @@ export class RenderUtil extends ChartOtpionUtil{
           .selectAll('.data').data(data).enter()
           .append('path')
           .attr('class', 'data');
-
+        gEnter.append("text")
+          .attr('class', 'text-black dark:text-white')
+          .attr("transform", "rotate(-90)")
+          .attr("y", 0 - this.margin.left)
+          .attr("x",0 - (this.height / 2))
+          .attr("dy", "1em")
+          .attr('font-size', 15)
+          .style("text-anchor", "middle")
+          .text("voltage[mV]");
+        gEnter.append("text")
+          .attr("x", this.width/2 - this.margin.left )
+          .attr("y", this.height-25 )
+          .attr('font-size', 15)
+          .style("text-anchor", "middle")
+          .text("time[s]");
         const legendEnter = gEnter.append('g')
           .attr('class', 'legend')
           .attr('transform', 'translate(' + (this.width-this.margin.right-this.margin.left-75) + ',25)');
@@ -70,36 +83,34 @@ export class RenderUtil extends ChartOtpionUtil{
 
         const g = svg.select('g')
           .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
-
+        // X axis
         const axisX = g.select('g.axis.x')
           .attr('transform', 'translate(0,' + (this.height-this.margin.bottom-this.margin.top) + ')')
           .call(d3.axisBottom(x).ticks(this.xAxis.ticks) as any);
-          
         axisX.select('path')
           .attr('stroke', this.color[0])
           .attr('stroke-width','3');
-
         axisX.selectAll('.tick')
           .attr('font-size',this.xAxis.fontsize)
           .attr('color', this.color[0]);
-        
+        // Y axis
+        const axisY = g.select('g.axis.y')
+          .attr('class', 'axis y')
+          .call(d3.axisLeft(y).ticks(this.yAxis.ticks) as any);
+        axisY.select('path')
+          .attr('stroke', this.color[0])
+          .attr('stroke-width','3');
+        axisY.selectAll('.tick')
+          .attr('font-size',this.yAxis.fontsize)
+          .attr('color', this.color[0]);
+        // markline
         g.select('g.markline')
           .attr("transform", "translate(0, "+y(this.marklineVal.value)+")")
           .select('line')
           .attr("x2", this.width-this.margin.left-this.margin.right-10);
-
-        const axisY = g.select('g.axis.y')
-          .attr('class', 'axis y')
-          .call(d3.axisLeft(y).ticks(this.yAxis.ticks) as any);
-
-        axisY.select('path')
-          .attr('stroke', this.color[0])
-          .attr('stroke-width','3');
-
-        axisY.selectAll('.tick')
-          .attr('font-size',this.yAxis.fontsize)
-          .attr('color', this.color[0]);
-
+        g.select('#clip')
+          .attr('width', this.width-this.margin.left-this.margin.right)
+          .attr('height', this.height-this.margin.top-this.margin.bottom);
         g.selectAll('g path.data')
           .data(data)
           .style('stroke', (d: any) => { return z(d.label); })
@@ -129,10 +140,10 @@ export class RenderUtil extends ChartOtpionUtil{
     return chart;
   }
   
-  private resizeData = () => {
+  private resizeData() {
     if (this.dataArr.length > this.DATA_MAX_LENGTH) {
       this.dataArr.shift();
-      if(this.dataArr.length > this.DATA_MAX_LENGTH) {
+      if (this.dataArr.length > this.DATA_MAX_LENGTH) {
         this.resizeData();
       }
     }
@@ -140,7 +151,7 @@ export class RenderUtil extends ChartOtpionUtil{
 
   public chart = this.realTimeLineChart();
 
-  public resize = () => {
+  public resize(){
     if (d3.select('#osc-chart svg').empty()) return;
     this.width = +d3.select('#osc-chart').style('width').replace(/(px)/g, '');
     d3.select('#osc-chart').call(this.chart);

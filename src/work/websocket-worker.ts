@@ -14,9 +14,9 @@ let stopperConnection: WebSocket;
 // false: unconected, true: connected
 const isConnect = (() => {
   let v = false;
-  const change = (n: boolean) => postMessage('isConnect', v = n);
-  const send = () => postMessage('isConnect', v);
-  const value = () => v;
+  const change = (n: boolean):void => postMessage('isConnect', v = n);
+  const send = ():void => postMessage('isConnect', v);
+  const value = ():boolean => v;
   return { value, change, send };
 })();
 
@@ -26,14 +26,11 @@ let stopperStatus = 0;
 // false: unprocessing, true: processing
 const isProcess = (() => {
   let v = false;
-  const change = (n: boolean) => {
-    postMessage('isProcess', v = n);
-    // if(v) newFrame();
-  };
+  const change = (n: boolean) => postMessage('isProcess', v = n);
   const send = () => postMessage('isProcess', v);
   const value = () => v;
   return { value, change, send};
-})()
+})();
 
 let plotData: Array<PlotDataFormat> = [];
 
@@ -50,14 +47,15 @@ worker.onmessage = (event: MessageEvent): void => {
       worker.postMessage({type:'plotData',plotData});
       plotData = [];
       break;
-    case 'connect':
-      connectWss();
-      break;
     case 'run':
-      event.data.timer ? runMeasurement(event.data.timer) : runMeasurement(3000);
+      plotData = [];
+      event.data.timer ? runMeasurement(event.data.timer) : runMeasurement();
       break;
     case 'stop':
       stopMeasurement();
+      break;
+    case 'connect':
+      connectWss();
       break;
     case 'disconnect':
       disconnectWss();
@@ -71,21 +69,21 @@ worker.onmessage = (event: MessageEvent): void => {
 const connectWss = (): boolean => {
   if (runnerConnection != undefined) disconnectWss();
 
-  // Create a WebSocket Object
+  // Create a WebSocket Object.
   runnerConnection = new WebSocket(Const.WS_ADDRESS);
 
-  if(!stopperStatus) makeStopper();
+  if (!stopperStatus) makeStopper();
 
-  // Define WebSocket Open Event
+  // Define WebSocket Open Event.
   runnerConnection.onopen = (): void => {
     isConnect.change(true);
     checkServer();
   };
 
-  // Define WebSocket Error Event
+  // Define WebSocket Error Event.
   runnerConnection.onerror = (): void => {/* do nothing */};
 
-  // Define WebSocket Event for when catch messages
+  // Define WebSocket Event for when catch messages from C/C++.
   runnerConnection.onmessage = (event: MessageEvent): void => {
     const jsonData = JSON.parse(event.data);
     switch (jsonData.type) {
@@ -95,12 +93,12 @@ const connectWss = (): boolean => {
         break;
       case 'isProcess':
         isProcess.change(jsonData.value);
-        postMessage('count', count)
+        postMessage('count', count);
         break;
     }
   };
 
-  // Define WebSocket Close Event
+  // Define WebSocket Close Event.
   runnerConnection.onclose = (): void => {
     isConnect.change(false);
     if (isProcess.value()) stopMeasurement();
@@ -127,11 +125,11 @@ const runMeasurement = (timer?: number): void => {
 
     runnerConnection.send('run');
 
-    // if(timer){
-    //   setTimeout( () => {
-    //     stopMeasurement();
-    //   },timer)
-    // }
+    if (timer){
+      setTimeout( () => {
+        stopMeasurement();
+      },timer);
+    }
 
   }else {/*do something*/}
 }
@@ -141,7 +139,7 @@ const runMeasurement = (timer?: number): void => {
  * WS server will stop measurement and return "isProcess".
  */
 const stopMeasurement = (): void => {
-  if(isProcess.value()) {
+  if (isProcess.value()) {
     if (stopperStatus) {
       stopperConnection.send('stop');
     } else {

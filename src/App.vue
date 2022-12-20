@@ -34,7 +34,7 @@ onMounted(()=> {
 
   const themeToggleBtn = document.getElementById('theme-toggle');
 
-  themeToggleBtn?.addEventListener('click', function() {
+  themeToggleBtn?.addEventListener('click', () => {
 
       // toggle icons inside button
       themeToggleDarkIcon?.classList.toggle('hidden');
