@@ -1,7 +1,7 @@
 export const Const = {
   WS_ADDRESS: 'ws://localhost:8088/echo',
   // WS_ADDRESS: "ws://192.168.11.2:8088/echo",
-  GRAPH_ID: 'graph',
+  GRAPH_ID: 'osc-chart',
 }
 
 export const TW ={
@@ -23,4 +23,27 @@ export interface PlotDataFormat {
 export interface ChartDataFormat{
   label: string,
   channels: Array<PlotDataFormat>,
+}
+
+
+import * as d3 from 'd3'
+export const saveSVGasPNG = () => {
+  const d3svg = document.querySelector(`#${Const.GRAPH_ID} > svg` ) as SVGSVGElement;
+  const svgData = new XMLSerializer().serializeToString(d3svg);
+  const canvas = document.createElement("canvas");
+  canvas.width = d3svg.width.baseVal.value;
+  canvas.height = d3svg.height.baseVal.value;
+  const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+  const image = new Image();
+  image.src = "data:image/svg+xml;charset=utf-8;base64," + btoa(svgData);
+
+  image.onload = () => {
+    ctx.drawImage(image, 0, 0)
+    // ダウンロードリンクを動的に追加（ここでのポイントはcanvas.toDataURLであり、d3.jsを使わなくても良いが、せっかくなので。
+    d3.select("body").append("a")
+      .attr("href", canvas.toDataURL("image/png"))
+      .attr("type", "application/octet-stream")
+      .attr("download", 'dl.png')
+      .text("ダウンロードできます")
+  }
 }

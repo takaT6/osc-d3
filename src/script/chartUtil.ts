@@ -1,17 +1,7 @@
-import WebSocketWorker from 'worker-loader?inline=fallback!@/work/websocket-worker.ts';
-import { ref } from 'vue';
 import * as d3 from 'd3'
-import { RenderUtil } from "@/script/renderUtil";
-import { PlotDataFormat } from '@/script/common';
+import { WebSocketUtil } from "@/script/webSocketUtil";
 
-export class ChartUtil extends RenderUtil{
-
-  private wsWorker = new WebSocketWorker();
-  
-  public isConnect = ref(false);
-
-  public isProcess = ref(false);
-
+export class ChartUtil extends WebSocketUtil{
   constructor() {
     super();
     this.wsWorker.onmessage = (event: MessageEvent): void => {
@@ -38,30 +28,11 @@ export class ChartUtil extends RenderUtil{
       }
     }
   }
-  
-  public wsPostMessage = (mssg:string | object): void => { 
-    if (typeof mssg === 'string') this.wsWorker.postMessage({mssg}); 
-    else this.wsWorker.postMessage(mssg); 
-  }
-
-  private newFrame = (): void => {
-    if (this.isProcess.value) {
-      this.wsPostMessage('sendData');
-      requestAnimationFrame(this.newFrame);
-    }
-  }
-
-  public connect = (): void => this.wsPostMessage('connect');
-
-  public disconnect = (): void => this.wsPostMessage('disconnect');
 
   public run = (): void => { 
     this.seedData();
-    if (this.isTimer) this.wsPostMessage({mssg:'run', timer:this.timer});
-    else this.wsPostMessage('run');
+    super.run();
   }
-
-  public stop = (): void => this.wsPostMessage('stop');
   
   private seedDataSet = [...Array(this.DATA_MAX_LENGTH)].map(i => { return {time: 0, channel1: 0}});
   public seedData = (): void => {

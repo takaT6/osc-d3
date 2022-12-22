@@ -38,7 +38,7 @@ export class RenderUtil extends ChartOtpionUtil{
         gEnter.append('g').attr('class', 'axis y');
         gEnter.append('defs').append('clipPath')
           .append('rect')
-          .attr('id', 'clip')
+          .attr('id', 'clip');
         gEnter.append("g")
           .attr('class', 'markline')
           .attr('clip-path', 'url(#clip)')
@@ -109,6 +109,7 @@ export class RenderUtil extends ChartOtpionUtil{
           .select('line')
           .attr("x2", this.width-this.margin.left-this.margin.right-10);
         g.select('#clip')
+        .attr('fill', 'pink')
           .attr('width', this.width-this.margin.left-this.margin.right)
           .attr('height', this.height-this.margin.top-this.margin.bottom);
         g.selectAll('g path.data')
