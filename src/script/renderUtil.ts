@@ -152,7 +152,7 @@ export class RenderUtil extends ChartOtpionUtil{
 
   public chart = this.realTimeLineChart();
 
-  public resize = (): void => {
+  public resize = () => {
     if (d3.select('#osc-chart svg').empty()) return;
     this.width = +d3.select('#osc-chart').style('width').replace(/(px)/g, '');
     d3.select('#osc-chart').call(this.chart);
