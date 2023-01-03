@@ -33,7 +33,8 @@ export class ChartOtpionUtil {
 
   public marklineVal = ref(5);
 
-  public DATA_MAX_LENGTH = 10000;
+  // public DATA_MAX_LENGTH = 10000;
+  public DATA_MAX_LENGTH = 3000;
 
   public dataArr: Array<PlotDataFormat> = [];
 }
