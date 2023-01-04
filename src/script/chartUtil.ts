@@ -20,6 +20,11 @@ export class StaticChartUtil extends RenderUtil{
     d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
     requestAnimationFrame(this.rerender);
   }
+
+  public reresize = () => {
+    this.width = +d3.select('#osc-chart').style('width').replace(/(px)/g, '');
+    d3.select('#osc-chart').call(this.chart);
+  }
 }
 
 export class ChartUtil extends WebSocketUtil{
