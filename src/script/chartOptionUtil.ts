@@ -1,4 +1,3 @@
-
 import { PlotDataFormat } from '@/script/common';
 import { ref } from "vue";
 

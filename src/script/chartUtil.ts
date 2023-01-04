@@ -1,6 +1,27 @@
 import * as d3 from 'd3'
 import { WebSocketUtil } from "@/script/webSocketUtil";
 
+import { RenderUtil } from "@/script/renderUtil";
+export class StaticChartUtil extends RenderUtil{
+  constructor() {
+    super();
+  }
+  public initRenderer = (): void => {
+    this.seedData();
+    d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    d3.select(window).on('resize', this.resize);
+  }
+  private seedDataSet = [...Array(this.DATA_MAX_LENGTH)].map(i => { return {time: 0, channel1: 0}});
+  public seedData = (): void => {
+    this.dataArr = [];
+    this.dataArr = this.seedDataSet;
+  }
+  public rerender = (): void => {
+    d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    requestAnimationFrame(this.rerender);
+  }
+}
+
 export class ChartUtil extends WebSocketUtil{
   constructor() {
     super();

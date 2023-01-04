@@ -2,6 +2,7 @@
   <nav class="text-black dark:text-white">
     <router-link to="/">Home</router-link> |
     <router-link to="/oscilloscope">Oscilloscope</router-link> |
+    <router-link to="/files">Files</router-link> |
     <router-link to="/history">history</router-link> |
     <router-link to="/about">About</router-link>
     <div class="mr-3" style="float: right;vertical-align: center;">
@@ -49,7 +50,6 @@ onMounted(()=> {
               document.documentElement.classList.remove('dark');
               localStorage.setItem('color-theme', 'light');
           }
-
       // if NOT set via local storage previously
       } else {
           if (document.documentElement.classList.contains('dark')) {
