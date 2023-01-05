@@ -55,6 +55,7 @@ export class RenderUtil extends ChartOtpionUtil{
           .attr('class', 'data');
         gEnter.append("text")
           .attr('class', 'text-black dark:text-white')
+          .attr('class', 'ylabel')
           .attr("transform", "rotate(-90)")
           .attr("y", 0 - this.margin.left)
           .attr("x",0 - (this.height / 2))
@@ -63,8 +64,8 @@ export class RenderUtil extends ChartOtpionUtil{
           .style("text-anchor", "middle")
           .text("voltage[mV]");
         gEnter.append("text")
-          .attr("x", this.width/2 - this.margin.left )
-          .attr("y", this.height-25 )
+          // .attr("x", this.width/2 - this.margin.left )
+          // .attr("y", this.height-25 )
           .attr('font-size', 15)
           .style("text-anchor", "middle")
           .text("time[s]");
@@ -121,6 +122,9 @@ export class RenderUtil extends ChartOtpionUtil{
           .duration(this.duration)
           .ease(d3.easeLinear)
           .on('start', tick);
+        g.selectAll('text')
+          .attr("x", this.width/2 - this.margin.left )
+          .attr("y", this.height-25 )
 
         g.selectAll('g.legend text')
           .data(data)

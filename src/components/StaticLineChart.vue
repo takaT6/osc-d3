@@ -79,6 +79,7 @@ import { onMounted } from "vue";
 import { Const, TW, saveSVGasPNG } from '@/script/common';
 import { StaticChartUtil } from '@/script/chartUtil';
 import { PlotDataFormat } from '@/script/common';
+import * as d3 from 'd3';
 
 const pickerOpts = {
   types: [
@@ -102,15 +103,19 @@ document.getElementById("open_folder")!.addEventListener("click", async (e) => {
   const [fileHandle] = await window.showOpenFilePicker(pickerOpts);
   const file = await fileHandle.getFile();
   const text = await file.text();
-  const array = convertCSVtoArray(text)
+  const array: Array<PlotDataFormat>  = convertCSVtoArray(text)
   console.log(array)
-  chartUtil.dataArr = array
-  chartUtil.rerender()
-  console.log(chartUtil.dataArr)
+  chartUtil.dataArr = array;
+  const yMin = d3.min(array, (d:PlotDataFormat) => { return d.channel1; }) as number;
+  const yMax = d3.max(array, (d:PlotDataFormat) => { return d.channel1; }) as number;
+  chartUtil.yAxis.max = yMax + 10;
+  chartUtil.yAxis.min = yMin - 10;
+  chartUtil.rerender();
+  console.log(chartUtil.dataArr);
 });
 });
 // 読み込んだCSVデータを二次元配列に変換する関数convertCSVtoArray()の定義
-function convertCSVtoArray(str:string){ // 読み込んだCSVデータが文字列として渡される
+function convertCSVtoArray(str:string):PlotDataFormat[]{ // 読み込んだCSVデータが文字列として渡される
     const result = []; // 最終的な二次元配列を入れるための配列
     const tmp = str.split("\n"); // 改行を区切り文字として行を要素とした配列を生成
  
