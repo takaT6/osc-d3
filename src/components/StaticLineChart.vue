@@ -1,6 +1,6 @@
 <template>
   <div id="chart-area">
-    <div id="osc-chart"></div>
+    <div id="osc-static-chart"></div>
   </div>
   <div id="config-area">
     <div id="accordion-collapse" data-accordion="collapse">
@@ -13,7 +13,10 @@
       <div id="accordion-collapse-body-1" class="hidden" aria-labelledby="accordion-collapse-heading-1">  
         <div :class="TW.ACCORDION_BODY" class="justify-center">
           <div class="flex justify-center">
+            <div class="justify-center flex-col">
+            <label :class="TW.LABEL">markline</label>
             <input :class="TW.INPUT" class="" type="number" v-model="chartUtil.marklineVal.value" style="width: 100px;">
+            </div>
           </div>
           <div class="flex justify-center flex-row">
             <label :class="TW.LABEL">Min</label>
@@ -148,7 +151,7 @@ function convertCSVtoArray(str:string):PlotDataFormat[]{ // 読み込んだCSV�
 
 <style scoped lang="scss">
 
-#osc-chart{
+#osc-static-chart{
   // padding-left: 10px;
   width: auto;
   height: 430px;

@@ -12,7 +12,7 @@
         @click="chartUtil.disconnect"
       >Disconnect</button>
     </div>
-    <div id="osc-chart"></div>
+    <div id="osc-dynamic-chart"></div>
     <div class="controller2">
       <button
         :class="[(!chartUtil.isConnect.value || chartUtil.isProcess.value) ? TW.BTN_DISABLED : TW.BTN_ABLED]" 
@@ -24,6 +24,10 @@
         :disabled="!chartUtil.isConnect.value || !chartUtil.isProcess.value"
         @click="chartUtil.stop"
       >stop</button>
+      <button
+          :class="TW.BTN_ABLED" 
+          @click="saveSVGasPNG"
+      >download</button>
     </div>
   </div>
   <div id="config-area">
@@ -91,15 +95,11 @@
         </div>
       </div>
     </div>
-    <button
-        :class="TW.BTN_ABLED" 
-        @click="saveSVGasPNG"
-    >download</button>
   </div>
 </template>
 
 <script setup lang="ts" >
-import { onMounted } from "vue";
+import { onMounted } from 'vue';
 import { Const, TW, saveSVGasPNG } from '@/script/common';
 import { ChartUtil } from '@/script/chartUtil';
 
@@ -113,7 +113,7 @@ onMounted(()=> {
 
 <style scoped lang="scss">
 
-#osc-chart{
+#osc-dynamic-chart{
   // padding-left: 10px;
   width: auto;
   height: 430px;

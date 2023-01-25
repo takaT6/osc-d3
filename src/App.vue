@@ -2,8 +2,8 @@
   <nav class="text-black dark:text-white">
     <router-link to="/">Home</router-link> |
     <router-link to="/oscilloscope">Oscilloscope</router-link> |
-    <router-link to="/files">Files</router-link> |
-    <router-link to="/history">history</router-link> |
+    <router-link to="/file">File</router-link> |
+    <!-- <router-link to="/history">history</router-link> | -->
     <router-link to="/about">About</router-link>
     <div class="mr-3" style="float: right;vertical-align: center;">
       <button id="theme-toggle" type="button" class="border border-black dark:border-white text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1">

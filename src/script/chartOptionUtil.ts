@@ -1,7 +1,7 @@
-import { PlotDataFormat } from '@/script/common';
+import { Const, PlotDataFormat } from '@/script/common';
 import { ref } from "vue";
-
 export class ChartOtpionUtil {
+  public chartID = "";
   public margin = {top: 20, right: 10, bottom: 40, left: 50};
   public width = document.body.clientWidth;
   public height = 420;

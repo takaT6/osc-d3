@@ -31,7 +31,7 @@ export class RenderUtil extends ChartOtpionUtil{
           .x((d:any) => { return x(d.time); })
           .y((d:any) => { return y(d.value); });
 
-        const chartNode = d3.select('#osc-chart').node();
+        const chartNode = d3.select(`#${this.chartID}`).node();
         let svg = d3.select(chartNode).selectAll('svg').data([data]);
         const gEnter = svg.enter().append('svg').append('g');
         gEnter.append('g').attr('class', 'axis x');
@@ -57,8 +57,8 @@ export class RenderUtil extends ChartOtpionUtil{
           .attr('class', 'text-black dark:text-white')
           .attr('class', 'ylabel')
           .attr("transform", "rotate(-90)")
-          .attr("y", 0 - this.margin.left)
-          .attr("x",0 - (this.height / 2))
+          // .attr("y", 0 - this.margin.left)
+          // .attr("x",0 - (this.height / 2))
           .attr("dy", "1em")
           .attr('font-size', 15)
           .style("text-anchor", "middle")
@@ -66,12 +66,12 @@ export class RenderUtil extends ChartOtpionUtil{
         gEnter.append("text")
           // .attr("x", this.width/2 - this.margin.left )
           // .attr("y", this.height-25 )
+          .attr('class', 'xlabel')
           .attr('font-size', 15)
           .style("text-anchor", "middle")
           .text("time[s]");
         const legendEnter = gEnter.append('g')
-          .attr('class', 'legend')
-          .attr('transform', 'translate(' + (this.width-this.margin.right-this.margin.left-75) + ',25)');
+          .attr('class', 'legend');
         
         legendEnter.selectAll('text')
           .data(data).enter()
@@ -122,14 +122,19 @@ export class RenderUtil extends ChartOtpionUtil{
           .duration(this.duration)
           .ease(d3.easeLinear)
           .on('start', tick);
-        g.selectAll('text')
+
+        g.select('.ylabel')
+          .attr("y", 0 - this.margin.left)
+          .attr("x",0 - (this.height / 2))
+        g.select('.xlabel')
           .attr("x", this.width/2 - this.margin.left )
           .attr("y", this.height-25 )
 
         g.selectAll('g.legend text')
           .data(data)
-          .text((d: any) => { return d.label.toUpperCase() + ': ' + d.channels[d.channels.length-1].value; });
-      
+          .text((d: any) => { return d.label.toUpperCase() + ': ' + d.channels[d.channels.length-1].value; })
+          .attr('transform', 'translate(' + (this.width-this.margin.right-this.margin.left-75) + ',25)');
+          
         function tick(this: any) {
           d3.select(this)
             .attr('d', (d:any) => { return line(d.channels); })
@@ -157,8 +162,8 @@ export class RenderUtil extends ChartOtpionUtil{
   public chart = this.lineChart();
 
   public resize = () => {
-    if (d3.select('#osc-chart svg').empty()) return;
-    this.width = +d3.select('#osc-chart').style('width').replace(/(px)/g, '');
-    d3.select('#osc-chart').call(this.chart);
+    if (d3.select(`#${this.chartID} svg`).empty()) return;
+    this.width = +d3.select(`#${this.chartID}`).style('width').replace(/(px)/g, '');
+    d3.select(`#${this.chartID}`).call(this.chart);
   }
 }

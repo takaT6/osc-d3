@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
     component: OscilloscopeView
   },
   {
-    path: '/files',
+    path: '/file',
     name: 'files',
     component: FileView
   },

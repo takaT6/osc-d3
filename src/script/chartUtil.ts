@@ -1,35 +1,39 @@
 import * as d3 from 'd3'
 import { WebSocketUtil } from "@/script/webSocketUtil";
-
 import { RenderUtil } from "@/script/renderUtil";
+import { Const } from '@/script/common';
 export class StaticChartUtil extends RenderUtil{
   constructor() {
     super();
+    this.chartID = Const.STATIC_GRAPH_ID;
   }
   public initRenderer = (): void => {
     this.seedData();
-    d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    d3.select(`#${this.chartID}`).datum(this.dataArr).call(this.chart);
     d3.select(window).on('resize', this.resize);
   }
   private seedDataSet = [...Array(this.DATA_MAX_LENGTH)].map(i => { return {time: 0, channel1: 0}});
+
   public seedData = (): void => {
     this.dataArr = [];
     this.dataArr = this.seedDataSet;
   }
+
   public rerender = (): void => {
-    d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    d3.select(`#${this.chartID}`).datum(this.dataArr).call(this.chart);
     requestAnimationFrame(this.rerender);
   }
 
   public reresize = () => {
-    this.width = +d3.select('#osc-chart').style('width').replace(/(px)/g, '');
-    d3.select('#osc-chart').call(this.chart);
+    this.width = +d3.select(`#${this.chartID}`).style('width').replace(/(px)/g, '');
+    d3.select(`#${this.chartID}`).call(this.chart);
   }
 }
 
 export class ChartUtil extends WebSocketUtil{
   constructor() {
     super();
+    this.chartID = Const.DYNAMIC_GRAPH_ID;
     this.wsWorker.onmessage = (event: MessageEvent): void => {
       switch (event.data.type){
         case 'plotData':
@@ -38,7 +42,7 @@ export class ChartUtil extends WebSocketUtil{
             this.dataArr.shift();
             this.upTriger.judgge(event.data.plotData[i].channel1);
           }
-          d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+          d3.select(`#${this.chartID}`).datum(this.dataArr).call(this.chart);
           break;
         case 'isConnect':
           this.isConnect.value = event.data.value;
@@ -84,13 +88,13 @@ export class ChartUtil extends WebSocketUtil{
 
   public initRenderer = (): void => {
     this.seedData();
-    d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    d3.select(`#${this.chartID}`).datum(this.dataArr).call(this.chart);
     d3.select(window).on('resize', this.resize);
     this.rerender();
   }
 
   public rerender = (): void => {
-    if (!this.isProcess.value) d3.select('#osc-chart').datum(this.dataArr).call(this.chart);
+    if (!this.isProcess.value) d3.select(`#${this.chartID}`).datum(this.dataArr).call(this.chart);
     requestAnimationFrame(this.rerender);
   }
 

@@ -1,7 +1,8 @@
 export const Const = {
   WS_ADDRESS: 'ws://localhost:8088/echo',
   // WS_ADDRESS: "ws://192.168.11.2:8088/echo",
-  GRAPH_ID: 'osc-chart',
+  STATIC_GRAPH_ID: 'osc-static-chart',
+  DYNAMIC_GRAPH_ID: 'osc-dynamic-chart',
 }
 
 export const TW ={
@@ -28,7 +29,7 @@ export interface ChartDataFormat{
 
 import * as d3 from 'd3'
 export const saveSVGasPNG = () => {
-  const d3svg = document.querySelector(`#${Const.GRAPH_ID} > svg` ) as SVGSVGElement;
+  const d3svg = document.querySelector(`#${Const.STATIC_GRAPH_ID} > svg` ) as SVGSVGElement;
   const svgData = new XMLSerializer().serializeToString(d3svg);
   const canvas = document.createElement("canvas");
   canvas.width = d3svg.width.baseVal.value;
