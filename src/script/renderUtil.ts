@@ -1,5 +1,4 @@
-
-import * as d3 from 'd3'
+import * as d3 from 'd3';
 import { PlotDataFormat, ChartDataFormat } from '@/script/common';
 import { ChartOtpionUtil } from './chartOptionUtil';
 
@@ -19,7 +18,7 @@ export class RenderUtil extends ChartOtpionUtil{
         const xMin = d3.min(data, (c:ChartDataFormat) => { return d3.min(c.channels, (d:PlotDataFormat) => { return d.time; })});
         const xMax = d3.max(data, (c:ChartDataFormat) => { return d3.max(c.channels, (d:PlotDataFormat) => { return d.time; })});
 
-        const x = d3.scaleLinear().rangeRound([0, this.width-this.margin.left-this.margin.right-10]);
+        const x = d3.scaleLinear().rangeRound([0, this.width-this.margin.left-this.margin.right-20]);
         const y = d3.scaleLinear().rangeRound([this.height-this.margin.top-this.margin.bottom, 0]);
         const z = d3.scaleOrdinal(this.color);
         
@@ -57,15 +56,11 @@ export class RenderUtil extends ChartOtpionUtil{
           .attr('class', 'text-black dark:text-white')
           .attr('class', 'ylabel')
           .attr("transform", "rotate(-90)")
-          // .attr("y", 0 - this.margin.left)
-          // .attr("x",0 - (this.height / 2))
           .attr("dy", "1em")
           .attr('font-size', 15)
           .style("text-anchor", "middle")
           .text("voltage[mV]");
         gEnter.append("text")
-          // .attr("x", this.width/2 - this.margin.left )
-          // .attr("y", this.height-25 )
           .attr('class', 'xlabel')
           .attr('font-size', 15)
           .style("text-anchor", "middle")
@@ -85,6 +80,7 @@ export class RenderUtil extends ChartOtpionUtil{
 
         const g = svg.select('g')
           .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
+
         // X axis
         const axisX = g.select('g.axis.x')
           .attr('transform', 'translate(0,' + (this.height-this.margin.bottom-this.margin.top) + ')')
@@ -109,7 +105,7 @@ export class RenderUtil extends ChartOtpionUtil{
         g.select('g.markline')
           .attr("transform", "translate(0, "+y(this.marklineVal.value)+")")
           .select('line')
-          .attr("x2", this.width-this.margin.left-this.margin.right-10);
+          .attr("x2", this.width-this.margin.left-this.margin.right-20);
         g.select('#rect')
           .attr('width', this.width-this.margin.left-this.margin.right)
           .attr('height', this.height-this.margin.top-this.margin.bottom);

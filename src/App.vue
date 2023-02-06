@@ -1,8 +1,8 @@
 <template>
   <nav class="text-black dark:text-white">
     <router-link to="/">Home</router-link> |
-    <router-link to="/oscilloscope">Oscilloscope</router-link> |
-    <router-link to="/file">File</router-link> |
+    <router-link to="/oscilloscope">Dynamic</router-link> |
+    <router-link to="/file">Static</router-link> |
     <!-- <router-link to="/history">history</router-link> | -->
     <router-link to="/about">About</router-link>
     <div class="mr-3" style="float: right;vertical-align: center;">
@@ -12,7 +12,9 @@
       </button>
     </div>
   </nav>
-  <router-view />
+  <div id="app">
+    <router-view />
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -6,6 +6,7 @@ export class StaticChartUtil extends RenderUtil{
   constructor() {
     super();
     this.chartID = Const.STATIC_GRAPH_ID;
+    this.lineWidth = 0.3;
   }
   public initRenderer = (): void => {
     this.seedData();

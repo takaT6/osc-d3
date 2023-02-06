@@ -1,5 +1,6 @@
 export const Const = {
   WS_ADDRESS: 'ws://localhost:8088/echo',
+  // WS_ADDRESS:"ws://192.168.0.43:8088/echo",
   // WS_ADDRESS: "ws://192.168.11.2:8088/echo",
   STATIC_GRAPH_ID: 'osc-static-chart',
   DYNAMIC_GRAPH_ID: 'osc-dynamic-chart',
